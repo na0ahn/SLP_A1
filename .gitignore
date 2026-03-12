@@ -1,0 +1,28 @@
+# Dataset (large, download separately)
+data/
+
+# Large checkpoint files (keep only best model for submission)
+outputs/checkpoints/checkpoint_epoch*.pt
+outputs/checkpoints/checkpoint_latest.pt
+
+# W&B local runs (large)
+outputs/wandb/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
