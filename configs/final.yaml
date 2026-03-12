@@ -1,0 +1,93 @@
+# ================================================================
+# KWS Project - Final Training Configuration
+# Optimized for accuracy on GSCv2 12-class
+# ================================================================
+
+# ----- Paths -----
+data:
+  root: "data/speech_commands_v0.02"
+  download_url: "http://download.tensorflow.org/data/speech_commands_v0.02.tar.gz"
+  target_words:
+    - "yes"
+    - "no"
+    - "up"
+    - "down"
+    - "left"
+    - "right"
+    - "on"
+    - "off"
+    - "stop"
+    - "go"
+  num_classes: 12
+  sample_rate: 16000
+  duration_sec: 1.0
+  num_workers: 4
+
+# ----- Feature Extraction -----
+feature:
+  n_fft: 640   # = win_length; gives exactly 49 frames for 1s@16kHz with center=False
+  win_length: 640
+  hop_length: 320
+  n_mels: 80
+  f_min: 20
+  f_max: 8000
+  window_fn: "hann"
+  center: false
+  log_eps: 1.0e-6
+  feature_norm: "utterance_mvn"
+
+# ----- Augmentation -----
+augmentation:
+  random_time_shift_ms: 100
+  specaugment_enabled: true
+  specaugment_time_masks: 2
+  specaugment_time_width: 8
+  specaugment_freq_masks: 2
+  specaugment_freq_width: 8
+
+# ----- Model -----
+model:
+  name: "dscnn"
+  n_classes: 12
+  dropout: 0.2
+  dscnn:
+    channels: [64, 128, 256, 256, 512]
+    use_residual: true
+
+# ----- Training -----
+training:
+  seed: 42
+  epochs: 40
+  batch_size: 256
+  optimizer: "adamw"
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  label_smoothing: 0.05
+  grad_clip_norm: 5.0
+  scheduler: "cosine"
+  warmup_epochs: 5
+  early_stopping_patience: 12
+  mixed_precision: false
+  save_dir: "outputs/checkpoints"
+  log_interval: 50
+
+# ----- W&B -----
+wandb:
+  enabled: true
+  project: "skku_kws_assignment1"
+  entity: null
+  mode: "offline"
+  tags:
+    - "gscv2"
+    - "kws"
+    - "log-mel"
+    - "dscnn"
+    - "final"
+
+# ----- Output -----
+output:
+  dir: "outputs"
+  report_assets_dir: "report_assets"
+  checkpoint_dir: "outputs/checkpoints"
+  log_dir: "outputs/logs"
+  summary_dir: "outputs/summaries"
