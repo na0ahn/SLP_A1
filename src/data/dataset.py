@@ -14,6 +14,10 @@ from collections import defaultdict
 import torch
 import torch.nn.functional as F
 import torchaudio
+try:
+    torchaudio.set_audio_backend("soundfile")
+except RuntimeError:
+    pass
 from torch.utils.data import Dataset, DataLoader
 
 from src.features.logmel import make_logmel_extractor
