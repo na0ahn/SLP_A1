@@ -76,7 +76,7 @@ wandb:
   enabled: true
   project: "skku_kws_assignment1"
   entity: null
-  mode: "offline"
+  mode: "online"
   tags:
     - "gscv2"
     - "kws"

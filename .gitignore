@@ -1,5 +1,5 @@
 # Dataset (large, download separately)
-data/
+/data/
 
 # Large checkpoint files (keep only best model for submission)
 outputs/checkpoints/checkpoint_epoch*.pt

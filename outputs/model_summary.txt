@@ -1,0 +1,97 @@
+======================================================================
+KWS Model Summary
+======================================================================
+Model type       : DSCNN
+Trainable params : 617,100
+Total params     : 617,100
+Max allowed      : 2,500,000
+Budget used      : 24.7%
+
+Architecture:
+----------------------------------------------------------------------
+DSCNN(
+  (stem): Sequential(
+    (0): Conv2d(1, 64, kernel_size=(10, 4), stride=(2, 2), padding=(4, 1), bias=False)
+    (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (2): ReLU(inplace=True)
+  )
+  (blocks): ModuleList(
+    (0): DSBlock(
+      (dw_conv): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=64, bias=False)
+      (dw_bn): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (pw_conv): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (pw_bn): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (act): ReLU(inplace=True)
+      (dropout): Identity()
+      (shortcut): Identity()
+    )
+    (1): DSBlock(
+      (dw_conv): Conv2d(64, 64, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=64, bias=False)
+      (dw_bn): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (pw_conv): Conv2d(64, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (pw_bn): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (act): ReLU(inplace=True)
+      (dropout): Identity()
+    )
+    (2): DSBlock(
+      (dw_conv): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128, bias=False)
+      (dw_bn): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (pw_conv): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (pw_bn): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (act): ReLU(inplace=True)
+      (dropout): Identity()
+      (shortcut): Identity()
+    )
+    (3): DSBlock(
+      (dw_conv): Conv2d(128, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=128, bias=False)
+      (dw_bn): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (pw_conv): Conv2d(128, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (pw_bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (act): ReLU(inplace=True)
+      (dropout): Identity()
+    )
+    (4-5): 2 x DSBlock(
+      (dw_conv): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=256, bias=False)
+      (dw_bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (pw_conv): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (pw_bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (act): ReLU(inplace=True)
+      (dropout): Identity()
+      (shortcut): Identity()
+    )
+    (6): DSBlock(
+      (dw_conv): Conv2d(256, 256, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=256, bias=False)
+      (dw_bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (pw_conv): Conv2d(256, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (pw_bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (act): ReLU(inplace=True)
+      (dropout): Identity()
+    )
+    (7): DSBlock(
+      (dw_conv): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=512, bias=False)
+      (dw_bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (pw_conv): Conv2d(512, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (pw_bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (act): ReLU(inplace=True)
+      (dropout): Identity()
+      (shortcut): Identity()
+    )
+  )
+  (gap): AdaptiveAvgPool2d(output_size=1)
+  (dropout): Dropout(p=0.2, inplace=False)
+  (classifier): Linear(in_features=512, out_features=12, bias=True)
+)
+
+======================================================================
+Feature spec:
+  Input shape    : (1, 80, 49)  [channels, n_mels, n_frames]
+  sample_rate    : 16000 Hz
+  n_fft          : 1024
+  win_length     : 640 samples (40 ms)
+  hop_length     : 320 samples (20 ms overlap)
+  n_mels         : 80
+  f_min          : 20 Hz
+  f_max          : 8000 Hz
+  log transform  : log(mel + 1e-6)
+  normalization  : utterance-wise MVN
+======================================================================

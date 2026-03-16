@@ -1,0 +1,65 @@
+{
+  "classes": [
+    "yes",
+    "no",
+    "up",
+    "down",
+    "left",
+    "right",
+    "on",
+    "off",
+    "stop",
+    "go",
+    "silence",
+    "unknown"
+  ],
+  "total": {
+    "train": 36923,
+    "valid": 4445,
+    "test": 4890
+  },
+  "per_class": {
+    "train": {
+      "yes": 3228,
+      "no": 3130,
+      "up": 2948,
+      "down": 3134,
+      "left": 3037,
+      "right": 3019,
+      "on": 3086,
+      "off": 2970,
+      "stop": 3111,
+      "go": 3106,
+      "silence": 3077,
+      "unknown": 3077
+    },
+    "valid": {
+      "yes": 397,
+      "no": 406,
+      "up": 350,
+      "down": 377,
+      "left": 352,
+      "right": 363,
+      "on": 363,
+      "off": 373,
+      "stop": 350,
+      "go": 372,
+      "silence": 371,
+      "unknown": 371
+    },
+    "test": {
+      "yes": 419,
+      "no": 405,
+      "up": 425,
+      "down": 406,
+      "left": 412,
+      "right": 396,
+      "on": 396,
+      "off": 402,
+      "stop": 411,
+      "go": 402,
+      "silence": 408,
+      "unknown": 408
+    }
+  }
+}
