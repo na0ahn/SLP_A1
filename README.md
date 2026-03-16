@@ -19,7 +19,7 @@
 
 ### Requirements
 - Python 3.9+
-- CUDA GPU (recommended)
+- CUDA GPU
 
 ### Install Dependencies
 
@@ -231,21 +231,6 @@ SLP_A1/
 └── data/
     └── speech_commands_v0.02/   # Dataset (download separately)
 ```
-
----
-
-## W&B Experiment Tracking
-
-```bash
-# Online mode
-export WANDB_API_KEY="your_api_key"
-python train.py --wandb_mode online
-
-# Sync offline logs later
-wandb sync outputs/wandb/
-```
-
-Tracked metrics: train loss, train/val accuracy, learning rate, gradient norm, epoch time.
 
 ---
 
