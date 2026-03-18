@@ -127,27 +127,64 @@ def build_splits(root: str, target_words: list, seed: int = 42):
     test_items = test_target + test_unknown
 
     # Add silence samples from _background_noise_
+    # Each noise file is split into 3 time-axis blocks (train/val/test)
+    # with a 1s buffer between blocks to prevent near-boundary leakage.
+    # All splits see all 6 noise files (diversity), but never share time regions.
     noise_dir = os.path.join(root, "_background_noise_")
-    noise_files = [
+    noise_files = sorted([
         os.path.join(noise_dir, f)
-        for f in sorted(os.listdir(noise_dir))
+        for f in os.listdir(noise_dir)
         if f.endswith(".wav")
-    ]
+    ])
+
+    target_length = 16000  # 1s at 16kHz
+    chunk_stride = 16000   # non-overlapping 1s chunks
+    buffer = 16000         # 1s buffer between split regions
+
+    # For each noise file, divide time axis into train(80%) / val(10%) / test(10%)
+    # with buffer zones between regions.
+    train_chunks, val_chunks, test_chunks = [], [], []
+
+    for noise_path in noise_files:
+        info = torchaudio.info(noise_path)
+        total = info.num_frames
+
+        # Region boundaries (with buffer gaps)
+        train_end = int(total * 0.8)
+        val_start = train_end + buffer
+        val_end = val_start + int(total * 0.1)
+        test_start = val_end + buffer
+        test_end = total
+
+        for region_start, region_end, chunk_list in [
+            (0, train_end, train_chunks),
+            (val_start, val_end, val_chunks),
+            (test_start, test_end, test_chunks),
+        ]:
+            pos = region_start
+            while pos + target_length <= region_end:
+                chunk_list.append((noise_path, pos))
+                pos += chunk_stride
+
+    rng.shuffle(train_chunks)
+    rng.shuffle(val_chunks)
+    rng.shuffle(test_chunks)
 
     silence_idx = LABEL_TO_IDX["silence"]
 
-    for n_samples, item_list in [
-        (avg_train, train_items),
-        (avg_val, val_items),
-        (avg_test, test_items),
+    for n_samples, item_list, chunks in [
+        (avg_train, train_items, train_chunks),
+        (avg_val, val_items, val_chunks),
+        (avg_test, test_items, test_chunks),
     ]:
         for i in range(n_samples):
-            noise_path = noise_files[i % len(noise_files)]
+            path, start = chunks[i % len(chunks)]
             item_list.append({
-                "path": noise_path,
+                "path": path,
                 "label": "silence",
                 "class_idx": silence_idx,
                 "is_noise": True,
+                "start": start,
             })
 
     return train_items, val_items, test_items
@@ -197,18 +234,21 @@ class SpeechCommandsDataset(Dataset):
         return len(self.items)
 
     def _load_noise_chunk(self, item: dict) -> torch.Tensor:
-        """Extract a random 1-second chunk from a background noise file."""
+        """Extract a fixed 1-second chunk from a background noise file.
+
+        All items have a 'start' key set during build_splits for determinism.
+        Train diversity comes from augmentation (TimeShift, SpecAugment).
+        """
         waveform = self._noise_waveforms.get(item["path"])
         if waveform is None:
             waveform, _ = torchaudio.load(item["path"])
             waveform = waveform[0]
 
-        max_start = waveform.shape[0] - self.target_length
-        if max_start <= 0:
-            return F.pad(waveform, (0, self.target_length - waveform.shape[0]))
-
-        start = random.randint(0, max_start)
-        return waveform[start : start + self.target_length]
+        start = item["start"]
+        chunk = waveform[start : start + self.target_length]
+        if chunk.shape[0] < self.target_length:
+            chunk = F.pad(chunk, (0, self.target_length - chunk.shape[0]))
+        return chunk
 
     def __getitem__(self, idx):
         item = self.items[idx]
@@ -249,7 +289,7 @@ def make_dataloaders(cfg: dict, seed: int = 42):
         (train_loader, val_loader, test_loader, class_names)
     """
     train_items, val_items, test_items = build_splits(
-        cfg["data"]["root"], cfg["data"]["target_words"]
+        cfg["data"]["root"], cfg["data"]["target_words"], seed=seed
     )
 
     print(f"[Data] Train: {len(train_items)}, Val: {len(val_items)}, Test: {len(test_items)}")

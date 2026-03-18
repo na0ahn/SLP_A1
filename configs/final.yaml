@@ -57,7 +57,7 @@ model:
 # ----- Training -----
 training:
   seed: 42
-  epochs: 40
+  epochs: 60
   batch_size: 256
   optimizer: "adamw"
   lr: 1.0e-3
