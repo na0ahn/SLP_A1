@@ -66,7 +66,7 @@ training:
   grad_clip_norm: 5.0
   scheduler: "cosine"
   warmup_epochs: 5
-  early_stopping_patience: 12
+  early_stopping_patience: 20
   mixed_precision: false
   save_dir: "outputs/checkpoints"
   log_interval: 50

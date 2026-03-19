@@ -11,7 +11,7 @@
 - **10 target keywords:** yes, no, up, down, left, right, on, off, stop, go
 - **2 special classes:** silence, unknown
 - **Model:** DS-CNN (Depthwise Separable CNN), 617,100 parameters
-- **Test accuracy: 96.36%** (target: 95%)
+- **Test accuracy: 95.42%** (target: 95%)
 
 ---
 
@@ -53,12 +53,15 @@ tar -xzf data/speech_commands_v0.02.tar.gz -C data/speech_commands_v0.02
 | Valid | 4,445   | ~1    |
 | Test  | 4,890   | ~1    |
 
+- **"unknown"**: Subsampled from 25 non-target word categories to match average per-class count.
+- **"silence"**: Generated from 6 background noise files. Each file is split by **time-axis** into train(80%)/val(10%)/test(10%) blocks with 1s buffer zones to prevent data leakage.
+
 ---
 
 ## Training
 
 ```bash
-# Full training (40 epochs, DS-CNN)
+# Full training (60 epochs, DS-CNN, early stopping patience=20)
 python train.py
 
 # With W&B online tracking
@@ -104,7 +107,7 @@ python train.py --eval_only --checkpoint outputs/checkpoints/best_model.pt
 ### Expected Output
 
 ```
-[Eval] Test accuracy: 0.9636 (96.36%)
+[Eval] Test accuracy: 0.9542 (95.42%)
 ```
 
 ### Checkpoint Details
@@ -113,9 +116,9 @@ python train.py --eval_only --checkpoint outputs/checkpoints/best_model.pt
 |------|-------|
 | File | `outputs/checkpoints/best_model.pt` |
 | Size | ~7.2 MB |
-| Best epoch | 39 (of 40) |
-| Val accuracy | 96.13% |
-| Test accuracy | 96.36% |
+| Best epoch | 51 (of 60) |
+| Val accuracy | 96.45% |
+| Test accuracy | 95.42% |
 | Parameters | 617,100 |
 
 The checkpoint contains: `model_state_dict`, `optimizer_state_dict`, `scheduler_state_dict`, `cfg`, `class_names`, `n_params`.
@@ -126,20 +129,20 @@ The checkpoint contains: `model_state_dict`, `optimizer_state_dict`, `scheduler_
 
 | Metric | Value |
 |--------|-------|
-| Best Validation Accuracy | 96.13% (epoch 39) |
-| **Test Accuracy** | **96.36%** |
+| Best Validation Accuracy | 96.45% (epoch 51) |
+| **Test Accuracy** | **95.42%** |
 | Parameters | 617,100 / 2,500,000 |
 
 ### Per-class Test Accuracy
 
 | Class | Accuracy | Class | Accuracy |
 |-------|----------|-------|----------|
-| yes | 98.33% | on | 93.69% |
-| no | 95.56% | off | 94.28% |
-| up | 97.18% | stop | 99.03% |
-| down | 94.33% | go | 96.27% |
-| left | 99.03% | silence | 100.0% |
-| right | 97.22% | unknown | 91.18% |
+| yes | 98.57% | on | 93.18% |
+| no | 96.54% | off | 93.78% |
+| up | 96.47% | stop | 99.76% |
+| down | 94.33% | go | 94.03% |
+| left | 98.54% | silence | 92.65% |
+| right | 97.47% | unknown | 89.46% |
 
 ---
 
@@ -171,7 +174,7 @@ The checkpoint contains: `model_state_dict`, `optimizer_state_dict`, `scheduler_
 |-----------|-------|
 | Optimizer | AdamW (lr=1e-3, weight_decay=1e-4) |
 | Scheduler | Cosine + Warmup (5 epochs) |
-| Epochs | 40 |
+| Epochs | 60 (early stopping patience=20) |
 | Batch size | 256 |
 | Gradient clipping | 5.0 |
 | Label smoothing | 0.05 |
