@@ -353,7 +353,7 @@ def save_results_table(results: dict, history: dict, save_dir: str):
         ["Parameters", f"{results.get('n_params', 'N/A'):,}"],
         ["Input shape", "(1, 80, 49)"],
         ["Feature", "Log-Mel Spectrogram"],
-        ["Feature spec", "n_fft=1024, win=640, hop=320, n_mels=80"],
+        ["Feature spec", "n_fft=640, win=640, hop=320, n_mels=80"],
         ["Augmentation", "RandomTimeShift + SpecAugment"],
         ["Regularization", "Dropout + Weight Decay + Label Smoothing"],
         ["Optimizer", "AdamW"],
@@ -417,7 +417,7 @@ Generated automatically after training.
 | 1 | Dataset: Google Speech Commands v2 | ✅ PASS | GSCv2 downloaded and used |
 | 2 | 12-class setup (10 words + silence + unknown) | ✅ PASS | yes/no/up/down/left/right/on/off/stop/go + silence + unknown |
 | 3 | Audio: 16 kHz, mono, 1 second | ✅ PASS | Enforced in load_and_preprocess() |
-| 4 | Log-Mel feature (40ms/20ms/80mel) | ✅ PASS | win=640, hop=320, n_mels=80, n_fft=1024 |
+| 4 | Log-Mel feature (40ms/20ms/80mel) | ✅ PASS | win=640, hop=320, n_mels=80, n_fft=640 |
 | 5 | Parameter count ≤ 2.5M | ✅ PASS | {n_params:,} params ({100*n_params/2_500_000:.1f}% of budget) |
 | 5b| Runtime assert on param count | ✅ PASS | assert in src/models/model.py:validate_param_count() |
 | 6a | At least 1 augmentation | ✅ PASS | RandomTimeShift + SpecAugment |
@@ -460,7 +460,7 @@ Generated automatically after training.
 ```
 sample_rate: 16000 Hz
 duration:    1.0 s  (= 16000 samples)
-n_fft:       1024
+n_fft:       640
 win_length:  640  (= 40 ms at 16 kHz)
 hop_length:  320  (= 20 ms at 16 kHz)
 n_mels:      80
@@ -547,7 +547,7 @@ def save_report_caption_suggestions(save_dir: str):
 ### Figure 1: feature_examples.png
 **Caption:** Example waveforms and corresponding Log-Mel spectrograms for representative samples
 from each of the 12 classes in the Google Speech Commands v2 dataset. Features are computed with
-n_fft=1024, win_length=640 (40ms), hop_length=320 (20ms), 80 mel bins, and utterance-wise
+n_fft=640, win_length=640 (40ms), hop_length=320 (20ms), 80 mel bins, and utterance-wise
 mean-variance normalization, yielding a (80, 49) feature tensor per sample.
 
 ### Figure 2: augmentation_examples.png
@@ -596,7 +596,7 @@ with residual connections, trained with AdamW + cosine schedule over 40 epochs.
 def export_all_assets(
     results_path: str = "outputs/summaries/final_results.json",
     history_path: str = "outputs/logs/training_history.json",
-    data_summary_path: str = "outputs/summaries/data_summary.json",
+    data_summary_path: str = "outputs/summaries/data_split_summary.json",
     report_dir: str = "report_assets",
     outputs_dir: str = "outputs",
 ):

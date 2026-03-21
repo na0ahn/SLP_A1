@@ -5,7 +5,7 @@ Assignment specification:
   - window: 40 ms  → win_length = 640 samples at 16 kHz
   - overlap: 20 ms → hop_length = 320 samples at 16 kHz
   - mel bins: 80
-  - n_fft: 1024
+  - n_fft: 640
   - f_min: 20 Hz, f_max: 8000 Hz
   - log transform: log(mel + eps), eps = 1e-6
   - utterance-wise mean-variance normalization (MVN)
@@ -102,7 +102,7 @@ def make_logmel_extractor(cfg: dict) -> LogMelExtractor:
     f = cfg.get("feature", cfg)
     return LogMelExtractor(
         sample_rate=cfg.get("data", {}).get("sample_rate", 16000),
-        n_fft=f.get("n_fft", 1024),
+        n_fft=f.get("n_fft", 640),
         win_length=f.get("win_length", 640),
         hop_length=f.get("hop_length", 320),
         n_mels=f.get("n_mels", 80),

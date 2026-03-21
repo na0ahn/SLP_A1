@@ -90,7 +90,7 @@ def save_model_summary(model: nn.Module, cfg: dict, save_path: str):
         "Feature spec:",
         f"  Input shape    : (1, 80, 49)  [channels, n_mels, n_frames]",
         f"  sample_rate    : 16000 Hz",
-        f"  n_fft          : 1024",
+        f"  n_fft          : 640",
         f"  win_length     : 640 samples (40 ms)",
         f"  hop_length     : 320 samples (20 ms overlap)",
         f"  n_mels         : 80",
